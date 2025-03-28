@@ -1,5 +1,5 @@
 import React from 'react';
-import { Phone, Ambulance, Guitar as Hospital } from 'lucide-react';
+import { Phone, Ambulance, Cross } from 'lucide-react';
 
 export default function Emergency() {
   const emergencyContacts = [
@@ -18,8 +18,14 @@ export default function Emergency() {
     {
       name: 'Local Hospital',
       number: '(555) 123-4567',
-      icon: Hospital,
+      icon: Cross,
       description: 'General hospital inquiries and appointments',
+    },
+    {
+      name: 'Medical Emergency Line',
+      number: '(555) 987-6543',
+      icon: Cross,
+      description: '24/7 medical consultation service',
     },
   ];
 
@@ -28,41 +34,55 @@ export default function Emergency() {
   };
 
   return (
-    <div>
-      <div className="bg-red-100 p-4 rounded-lg mb-6">
-        <p className="text-red-700 font-semibold">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="bg-blue-50 p-4 rounded-lg mb-6 text-center border border-blue-200">
+        <p className="text-blue-800 font-semibold">
           If you are experiencing a medical emergency, immediately dial 911 or your local emergency services number.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {emergencyContacts.map((contact, index) => {
-          const Icon = contact.icon;
-          return (
-            <div key={index} className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
-              <Icon className="w-8 h-8 text-red-600 mb-4" />
-              <h3 className="text-xl font-semibold mb-2">{contact.name}</h3>
-              <p className="text-gray-600 mb-4">{contact.description}</p>
-              <button
-                onClick={() => handleCall(contact.number)}
-                className="w-full bg-red-600 text-white rounded-lg px-4 py-2 hover:bg-red-700 transition-colors flex items-center justify-center gap-2"
-              >
-                <Phone className="w-4 h-4" />
-                {contact.number}
-              </button>
-            </div>
-          );
-        })}
+      <div className="flex flex-col gap-8">
+        {/* Top Row */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 justify-items-center">
+          {emergencyContacts.slice(0, 2).map((contact, index) => (
+            <ContactCard key={index} contact={contact} handleCall={handleCall} />
+          ))}
+        </div>
+
+        {/* Bottom Row */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 justify-items-center">
+          {emergencyContacts.slice(2, 4).map((contact, index) => (
+            <ContactCard key={index + 2} contact={contact} handleCall={handleCall} />
+          ))}
+        </div>
       </div>
 
-      <div className="mt-8">
-        <h3 className="text-xl font-semibold mb-4">Additional Emergency Resources</h3>
-        <ul className="list-disc pl-6 space-y-2">
+      <div className="mt-8 text-center">
+        <h3 className="text-xl font-semibold mb-4 text-blue-800">Additional Emergency Resources</h3>
+        <ul className="list-disc pl-6 space-y-2 inline-block text-left text-blue-700">
           <li>Poison Control Center: 1-800-222-1222</li>
           <li>Mental Health Crisis Hotline: 988</li>
           <li>Local Police (non-emergency): (555) 555-5555</li>
         </ul>
       </div>
+    </div>
+  );
+}
+
+function ContactCard({ contact, handleCall }: { contact: any, handleCall: (number: string) => void }) {
+  const Icon = contact.icon;
+  return (
+    <div className="bg-white rounded-lg border border-blue-100 p-6 shadow-sm max-w-xs w-full text-center hover:shadow-md transition-shadow">
+      <Icon className="w-8 h-8 text-blue-600 mb-4 mx-auto" />
+      <h3 className="text-xl font-semibold mb-2 text-blue-900">{contact.name}</h3>
+      <p className="text-blue-700 mb-4">{contact.description}</p>
+      <button
+        onClick={() => handleCall(contact.number)}
+        className="w-full bg-blue-600 text-white rounded-lg px-4 py-2 hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+      >
+        <Phone className="w-4 h-4" />
+        {contact.number}
+      </button>
     </div>
   );
 }
