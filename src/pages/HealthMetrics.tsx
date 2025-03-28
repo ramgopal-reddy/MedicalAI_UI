@@ -2,10 +2,15 @@ import React, { useState } from 'react';
 import { Activity, Heart, Thermometer, Droplet, LineChart, Loader2 } from 'lucide-react';
 import axios from 'axios';
 
-// const API_URL = import.meta.env.API_URL || 'http://localhost:8000';
-
 function HealthMetrics() {
   const [formData, setFormData] = useState({
+    bloodPressure: '',
+    bloodSugar: '',
+    cholesterol: '',
+    heartRate: '',
+    temperature: ''
+  });
+  const [submittedData, setSubmittedData] = useState({
     bloodPressure: '',
     bloodSugar: '',
     cholesterol: '',
@@ -18,6 +23,7 @@ function HealthMetrics() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setSubmittedData({ ...formData });
 
     try {
       const response = await axios.post(`https://testing-final-07ll.onrender.com/api/predict`, formData);
@@ -34,6 +40,50 @@ function HealthMetrics() {
       ...prev,
       [e.target.name]: e.target.value
     }));
+  };
+
+  const getProgress = (metric: string, value: string) => {
+    if (!value) return { width: '0%', color: 'bg-gray-300' };
+    
+    const numericValue = parseFloat(value);
+    if (isNaN(numericValue)) return { width: '0%', color: 'bg-gray-300' };
+
+    switch(metric) {
+      case 'bloodPressure':
+        const [systolic] = value.split('/').map(Number);
+        return {
+          width: `${Math.min((systolic / 180) * 100, 100)}%`,
+          color: systolic < 120 ? 'bg-green-500' : 
+               systolic < 130 ? 'bg-yellow-500' : 'bg-red-500'
+        };
+      case 'bloodSugar':
+        return {
+          width: `${Math.min((numericValue / 200) * 100, 100)}%`,
+          color: numericValue < 100 ? 'bg-green-500' : 
+               numericValue < 126 ? 'bg-yellow-500' : 'bg-red-500'
+        };
+      case 'cholesterol':
+        return {
+          width: `${Math.min((numericValue / 300) * 100, 100)}%`,
+          color: numericValue < 200 ? 'bg-green-500' : 
+               numericValue < 240 ? 'bg-yellow-500' : 'bg-red-500'
+        };
+      case 'heartRate':
+        return {
+          width: `${Math.min(((numericValue - 40) / 120) * 100, 100)}%`,
+          color: (numericValue >= 60 && numericValue <= 100) ? 'bg-green-500' : 
+               ((numericValue >= 50 && numericValue < 60) || 
+                (numericValue > 100 && numericValue <= 120)) ? 'bg-yellow-500' : 'bg-red-500'
+        };
+      case 'temperature':
+        return {
+          width: `${Math.min(((numericValue - 96) / 4) * 100, 100)}%`,
+          color: (numericValue >= 97 && numericValue <= 99) ? 'bg-green-500' : 
+               (numericValue > 99 && numericValue <= 100) ? 'bg-yellow-500' : 'bg-red-500'
+        };
+      default:
+        return { width: '0%', color: 'bg-gray-300' };
+    }
   };
 
   const metrics = [
@@ -139,6 +189,33 @@ function HealthMetrics() {
             <h2 className="text-2xl font-semibold text-gray-900 mb-4">
               Analysis Results
             </h2>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+              {metrics.map(({ name, label, icon: Icon }) => {
+                const progress = getProgress(name, submittedData[name as keyof typeof submittedData]);
+                
+                return (
+                  <div key={name} className="space-y-2">
+                    <div className="flex items-center text-gray-700 font-medium mb-2">
+                      <Icon className="w-5 h-5 mr-2 text-blue-500" />
+                      {label}
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2.5">
+                      <div
+                        className={`h-2.5 rounded-full transition-all duration-300 ${progress.color}`}
+                        style={{ width: progress.width }}
+                      />
+                    </div>
+                    <div className="flex justify-between text-sm text-gray-500 mt-1">
+                      <span>Low</span>
+                      <span>Normal</span>
+                      <span>High</span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
             <div className="prose max-w-none">
               <p className="text-gray-700 whitespace-pre-line">{prediction}</p>
             </div>
