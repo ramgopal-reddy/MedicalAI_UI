@@ -1,5 +1,5 @@
 import React from 'react';
-import { Phone, Ambulance, Cross } from 'lucide-react';
+import { Phone, Ambulance, Cross, MapPin } from 'lucide-react';
 
 export default function Emergency() {
   const emergencyContacts = [
@@ -22,10 +22,10 @@ export default function Emergency() {
       description: 'General hospital inquiries and appointments',
     },
     {
-      name: 'Medical Emergency Line',
-      number: '(555) 987-6543',
-      icon: Cross,
-      description: '24/7 medical consultation service',
+      name: 'Medical Emergency',
+      number: 'Nearest Hospital Map',
+      icon: MapPin,
+      description: '24/7 medical service',
     },
   ];
 
@@ -71,18 +71,33 @@ export default function Emergency() {
 
 function ContactCard({ contact, handleCall }: { contact: any, handleCall: (number: string) => void }) {
   const Icon = contact.icon;
+  const isMapContact = contact.name === 'Medical Emergency'; // Identify the map contact
+
   return (
     <div className="bg-white rounded-lg border border-blue-100 p-6 shadow-sm max-w-xs w-full text-center hover:shadow-md transition-shadow">
       <Icon className="w-8 h-8 text-blue-600 mb-4 mx-auto" />
       <h3 className="text-xl font-semibold mb-2 text-blue-900">{contact.name}</h3>
       <p className="text-blue-700 mb-4">{contact.description}</p>
-      <button
-        onClick={() => handleCall(contact.number)}
-        className="w-full bg-blue-600 text-white rounded-lg px-4 py-2 hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
-      >
-        <Phone className="w-4 h-4" />
-        {contact.number}
-      </button>
+      
+      {isMapContact ? (
+        <a
+          href="https://www.google.com/maps/search/hospitals"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="w-full bg-blue-600 text-white rounded-lg px-4 py-2 hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+        >
+          <MapPin className="w-4 h-4" />
+          {contact.number}
+        </a>
+      ) : (
+        <button
+          onClick={() => handleCall(contact.number)}
+          className="w-full bg-blue-600 text-white rounded-lg px-4 py-2 hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+        >
+          <Phone className="w-4 h-4" />
+          {contact.number}
+        </button>
+      )}
     </div>
   );
 }
