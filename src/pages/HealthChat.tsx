@@ -19,7 +19,7 @@ function HealthChat() {
     setLoading(true);
 
     try {
-      const response = await axios.post(`https://testing-final-07ll.onrender.com/api/chat`, {
+      const response = await axios.post(`https://medicalai-5zmc.onrender.com/api/chat`, {
         message: userMessage
       });
       setChat(prev => [...prev, { type: 'ai', content: response.data.response }]);
