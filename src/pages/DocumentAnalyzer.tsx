@@ -39,7 +39,7 @@ function DocumentAnalyzer() {
     formData.append('file', file);
 
     try {
-      const response = await axios.post(`https://testing-final-07ll.onrender.com/api/process_document`, formData, {
+      const response = await axios.post(`https://medicalai-5zmc.onrender.com/api/process_document`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
