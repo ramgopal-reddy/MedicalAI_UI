@@ -94,5 +94,59 @@ function HealthChat() {
     </div>
   );
 }
+const data = [
+  {
+    id: 1,
+    text: "Canyon",
+    url: "https://images.pexels.com/photos/19561297/pexels-photo-19561297.jpeg?auto=compress&cs=tinysrgb&w=600&lazy=load",
+  },
+  {
+    id: 2,
+    text: "Kyoto",
+    url: "https://images.pexels.com/photos/19488566/pexels-photo-19488566/free-photo-of-kyoto.jpeg?auto=compress&cs=tinysrgb&w=600&lazy=load",
+  },
+  {
+    id: 3,
+    text: "Forest",
+    url: "https://images.pexels.com/photos/19237996/pexels-photo-19237996/free-photo-of-empty-road-in-forest.jpeg?auto=compress&cs=tinysrgb&w=600&lazy=load",
+  },
+  {
+    id: 4,
+    text: "Vietnam",
+    url: "https://images.pexels.com/photos/18707547/pexels-photo-18707547/free-photo-of-a-curved-road-in-the-mountains-with-a-motorcycle.jpeg?auto=compress&cs=tinysrgb&w=600&lazy=load",
+  },
+];
+
+function Images({ text, url }: { text: string; url: string }) {
+  const ref = useRef(null);
+  const { scrollYProgress } = useScroll({ target: ref });
+  const scale = useSpring(useTransform(scrollYProgress, [0, 1], [10, 20]), {
+    stiffness: 100,
+    damping: 5,
+  });
+  return (
+    <section className="relative h-screen border">
+      <div className="absolute inset-0 rounded-[5px]" ref={ref}>
+        <img className="absolute h-full w-full" src={url} alt={text} />
+        <motion.h2
+          className="absolute left-[45%] top-[50%] -translate-x-1/2 text-[20px] font-bold leading-[1.2] -tracking-[2px] text-red-500"
+          style={{ scale }}
+        >
+          {text}
+        </motion.h2>
+      </div>
+    </section>
+  );
+}
+
+function App() {
+  return (
+    <div className="App">
+      {data.map((img) => (
+        <Images key={img.id} text={img.text} url={img.url} />
+      ))}
+    </div>
+  );
+}
 
 export default HealthChat;
